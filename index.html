@@ -5,20 +5,20 @@
 
 <style>
 body{
-font-family: Arial;
-background:#1e1e1e;
-color:white;
-padding:40px;
+  font-family: Arial;
+  background:#1e1e1e;
+  color:white;
+  padding:40px;
 }
 
 input,select{
-padding:8px;
-margin:5px;
+  padding:8px;
+  margin:5px;
 }
 
 .name{
-padding:10px;
-border-bottom:1px solid #444;
+  padding:10px;
+  border-bottom:1px solid #444;
 }
 </style>
 </head>
@@ -27,30 +27,13 @@ border-bottom:1px solid #444;
 
 <h1>Warrior Name Archive</h1>
 
-<input id="search" placeholder="Search names...">
+<input id="searchBox" placeholder="Search names...">
 
 <select id="typeFilter">
 <option value="">All</option>
 <option value="prefix">Prefix</option>
 <option value="suffix">Suffix</option>
 <option value="both">Prefix/Suffix</option>
-<option value="red">Red</option>
-<option value="orange">Orange</option>
-<option value="yellow">Yellow</option>
-<option value="green">Green</option>
-<option value="blue">Blue</option>
-<option value="white">White</option>
-<option value="gray">Gray</option>
-<option value="black">Black</option>
-<option value="brown">Brown</option>
-<option value="physical">Physical</option>
-<option value="personality">Personality</option>
-<option value="animals">Animals</option>
-<option value="birds">Birds</option>
-<option value="insects">Insects</option>
-<option value="plants">Plants</option>
-<option value="trees">Trees</option>
-<option value="fish">Fish</option>  
 </select>
 
 <div id="results"></div>
@@ -59,13 +42,14 @@ border-bottom:1px solid #444;
 
 let names = [];
 
+// load the JSON database
 fetch("names.json")
   .then(response => response.json())
   .then(data => {
     names = data;
     displayNames(names);
 });
-  
+
 // capitalization helpers
 function formatPrefix(word){
   return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
@@ -75,42 +59,45 @@ function formatSuffix(word){
   return word.toLowerCase();
 }
 
-function filterNames(){
-
-let search = document.getElementById("searchBox").value.toLowerCase();
-let type = document.getElementById("typeFilter").value;
-let tag = document.getElementById("tagFilter").value.toLowerCase();
-
-let filtered = names.filter(n => {
-
-let matchesSearch = n.name.toLowerCase().includes(search);
-
-let matchesType = !type || n.type === type || n.type === "both";
-
-let matchesTag = !tag || n.tags.includes(tag);
-
-return matchesSearch && matchesType && matchesTag;
-
-});
-
-displayNames(filtered);
-
-} 
-  
+// display names with capitalization
 function displayNames(list){
-let results=document.getElementById("results");
-results.innerHTML="";
+  let results = document.getElementById("results");
+  results.innerHTML = "";
 
-list.forEach(n=>{
-results.innerHTML+=`<div class="name">${n.name}</div>`;
-});
+  list.forEach(n => {
+    let displayName = "";
+    if(n.type === "prefix"){
+      displayName = formatPrefix(n.name);
+    } else if(n.type === "suffix"){
+      displayName = formatSuffix(n.name);
+    } else { // both
+      displayName = formatPrefix(n.name);
+    }
+
+    results.innerHTML += `<div class="name">${displayName}</div>`;
+  });
 }
 
-document.getElementById("searchBox").addEventListener("input", filterNames);
-document.getElementById("typeFilter").addEventListener("change", filterNames);
-document.getElementById("tagFilter").addEventListener("input", filterNames);
+// filter function
+function filterNames(){
+  let search = document.getElementById("searchBox").value.toLowerCase();
+  let type = document.getElementById("typeFilter").value;
 
-displayNames(names);
+  let filtered = names.filter(n => {
+    let matchesSearch = n.name.toLowerCase().includes(search);
+    let matchesType = !type || n.type === type || n.type === "both";
+
+    return matchesSearch && matchesType;
+  });
+
+  displayNames(filtered);
+}
+
+// wait until page elements exist
+document.addEventListener("DOMContentLoaded", function(){
+  document.getElementById("searchBox").addEventListener("input", filterNames);
+  document.getElementById("typeFilter").addEventListener("change", filterNames);
+});
 
 </script>
 
