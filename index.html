@@ -33,20 +33,47 @@ border-bottom:1px solid #444;
 <option value="">All</option>
 <option value="prefix">Prefix</option>
 <option value="suffix">Suffix</option>
-<option value="both">Both</option>
+<option value="red">Red</option>
+<option value="orange">Orange</option>
+<option value="yellow">Yellow</option>
+<option value="green">Green</option>
+<option value="blue">Blue</option>
+<option value="white">White</option>
+<option value="gray">Gray</option>
+<option value="black">Black</option>
+<option value="brown">Brown</option>
+<option value="physical">Physical</option>
+<option value="personality">Personality</option>
+<option value="animals">Animals</option>
+<option value="birds">Birds</option>
+<option value="insects">Insects</option>
+<option value="plants">Plants</option>
+<option value="trees">Trees</option>
+<option value="fish">Fish</option>  
 </select>
 
 <div id="results"></div>
 
 <script>
 
-const names = [
-{name:"Sparrow",type:"prefix",tags:["bird","brown"]},
-{name:"Storm",type:"both",tags:["weather","gray"]},
-{name:"Blaze",type:"suffix",tags:["fire","orange"]},
-{name:"Frost",type:"prefix",tags:["ice","white"]}
-];
+let names = [];
 
+fetch("names.json")
+  .then(response => response.json())
+  .then(data => {
+    names = data;
+    displayNames(names);
+});
+  
+// capitalization helpers
+function formatPrefix(word){
+  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+}
+
+function formatSuffix(word){
+  return word.toLowerCase();
+}
+  
 function displayNames(list){
 let results=document.getElementById("results");
 results.innerHTML="";
