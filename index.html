@@ -17,20 +17,47 @@ input, select{
   padding:10px;
   border-bottom:1px solid #444;
 }
+.tag-filter{
+  display:inline-block;
+  margin-right:10px;
+}
 </style>
 </head>
 <body>
 
 <h1>Warrior Name Archive</h1>
 
+<!-- Search input -->
 <input id="searchBox" placeholder="Search names...">
 
+<!-- Type filter -->
 <select id="typeFilter">
   <option value="">All</option>
   <option value="prefix">Prefix</option>
   <option value="suffix">Suffix</option>
   <option value="both">Prefix/Suffix</option>
 </select>
+
+<!-- Tag filters -->
+<div id="tagFilters">
+  <span class="tag-filter"><input type="checkbox" value="red"> Red</span>
+  <span class="tag-filter"><input type="checkbox" value="orange"> Orange</span>
+  <span class="tag-filter"><input type="checkbox" value="yellow"> Yellow</span>
+  <span class="tag-filter"><input type="checkbox" value="green"> Green</span>
+  <span class="tag-filter"><input type="checkbox" value="blue"> Blue</span>
+  <span class="tag-filter"><input type="checkbox" value="white"> White</span>
+  <span class="tag-filter"><input type="checkbox" value="gray"> Gray</span>
+  <span class="tag-filter"><input type="checkbox" value="black"> Black</span>
+  <span class="tag-filter"><input type="checkbox" value="brown"> Brown</span>
+  <span class="tag-filter"><input type="checkbox" value="physical"> Physical</span>
+  <span class="tag-filter"><input type="checkbox" value="personality"> Personality</span>
+  <span class="tag-filter"><input type="checkbox" value="animals"> Animals</span>
+  <span class="tag-filter"><input type="checkbox" value="birds"> Birds</span>
+  <span class="tag-filter"><input type="checkbox" value="insects"> Insects</span>
+  <span class="tag-filter"><input type="checkbox" value="plants"> Plants</span>
+  <span class="tag-filter"><input type="checkbox" value="trees"> Trees</span>
+  <span class="tag-filter"><input type="checkbox" value="fish"> Fish</span>
+</div>
 
 <div id="results"></div>
 
@@ -46,7 +73,7 @@ function formatSuffix(word){
   return word.toLowerCase();
 }
 
-// display names
+// display names with capitalization
 function displayNames(list){
   let results = document.getElementById("results");
   results.innerHTML = "";
@@ -69,27 +96,36 @@ function filterNames(){
   let search = document.getElementById("searchBox").value.toLowerCase();
   let type = document.getElementById("typeFilter").value;
 
+  // get selected tags
+  let selectedTags = Array.from(document.querySelectorAll("#tagFilters input:checked")).map(e => e.value);
+
   let filtered = names.filter(n => {
     let matchesSearch = n.name.toLowerCase().includes(search);
     let matchesType = !type || n.type === type || n.type === "both";
-    return matchesSearch && matchesType;
+
+    // tag match: if no tags selected, true; otherwise at least one of the selected tags must be present
+    let matchesTag = selectedTags.length === 0 || n.tags.some(t => selectedTags.includes(t));
+
+    return matchesSearch && matchesType && matchesTag;
   });
 
   displayNames(filtered);
 }
 
-// load database
+// load JSON database
 fetch("names.json")
   .then(response => response.json())
   .then(data => {
     names = data;
     displayNames(names);
 
-    // attach listeners after page + data loaded
+    // attach listeners
     document.getElementById("searchBox").addEventListener("input", filterNames);
     document.getElementById("typeFilter").addEventListener("change", filterNames);
+    document.querySelectorAll("#tagFilters input").forEach(el => el.addEventListener("change", filterNames));
   });
 
 </script>
+
 </body>
 </html>
