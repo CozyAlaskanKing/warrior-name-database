@@ -74,6 +74,28 @@ function formatPrefix(word){
 function formatSuffix(word){
   return word.toLowerCase();
 }
+
+function filterNames(){
+
+let search = document.getElementById("searchBox").value.toLowerCase();
+let type = document.getElementById("typeFilter").value;
+let tag = document.getElementById("tagFilter").value.toLowerCase();
+
+let filtered = names.filter(n => {
+
+let matchesSearch = n.name.toLowerCase().includes(search);
+
+let matchesType = !type || n.type === type || n.type === "both";
+
+let matchesTag = !tag || n.tags.includes(tag);
+
+return matchesSearch && matchesType && matchesTag;
+
+});
+
+displayNames(filtered);
+
+} 
   
 function displayNames(list){
 let results=document.getElementById("results");
@@ -83,6 +105,10 @@ list.forEach(n=>{
 results.innerHTML+=`<div class="name">${n.name}</div>`;
 });
 }
+
+document.getElementById("searchBox").addEventListener("input", filterNames);
+document.getElementById("typeFilter").addEventListener("change", filterNames);
+document.getElementById("tagFilter").addEventListener("input", filterNames);
 
 displayNames(names);
 
