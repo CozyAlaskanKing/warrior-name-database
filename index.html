@@ -17,9 +17,10 @@ input, select{
   padding:10px;
   border-bottom:1px solid #444;
 }
-.tag-filter{
+#tagFilters label{
   display:inline-block;
   margin-right:10px;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -38,25 +39,26 @@ input, select{
   <option value="both">Prefix/Suffix</option>
 </select>
 
-<!-- Tag filters -->
+<!-- Tag checkboxes -->
+<h2>Filter by tag:</h2>
 <div id="tagFilters">
-  <span class="tag-filter"><input type="checkbox" value="red"> Red</span>
-  <span class="tag-filter"><input type="checkbox" value="orange"> Orange</span>
-  <span class="tag-filter"><input type="checkbox" value="yellow"> Yellow</span>
-  <span class="tag-filter"><input type="checkbox" value="green"> Green</span>
-  <span class="tag-filter"><input type="checkbox" value="blue"> Blue</span>
-  <span class="tag-filter"><input type="checkbox" value="white"> White</span>
-  <span class="tag-filter"><input type="checkbox" value="gray"> Gray</span>
-  <span class="tag-filter"><input type="checkbox" value="black"> Black</span>
-  <span class="tag-filter"><input type="checkbox" value="brown"> Brown</span>
-  <span class="tag-filter"><input type="checkbox" value="physical"> Physical</span>
-  <span class="tag-filter"><input type="checkbox" value="personality"> Personality</span>
-  <span class="tag-filter"><input type="checkbox" value="animals"> Animals</span>
-  <span class="tag-filter"><input type="checkbox" value="birds"> Birds</span>
-  <span class="tag-filter"><input type="checkbox" value="insects"> Insects</span>
-  <span class="tag-filter"><input type="checkbox" value="plants"> Plants</span>
-  <span class="tag-filter"><input type="checkbox" value="trees"> Trees</span>
-  <span class="tag-filter"><input type="checkbox" value="fish"> Fish</span>
+  <label><input type="checkbox" value="red"> Red</label>
+  <label><input type="checkbox" value="orange"> Orange</label>
+  <label><input type="checkbox" value="yellow"> Yellow</label>
+  <label><input type="checkbox" value="green"> Green</label>
+  <label><input type="checkbox" value="blue"> Blue</label>
+  <label><input type="checkbox" value="white"> White</label>
+  <label><input type="checkbox" value="gray"> Gray</label>
+  <label><input type="checkbox" value="black"> Black</label>
+  <label><input type="checkbox" value="brown"> Brown</label>
+  <label><input type="checkbox" value="physical"> Physical</label>
+  <label><input type="checkbox" value="personality"> Personality</label>
+  <label><input type="checkbox" value="animals"> Animals</label>
+  <label><input type="checkbox" value="birds"> Birds</label>
+  <label><input type="checkbox" value="insects"> Insects</label>
+  <label><input type="checkbox" value="plants"> Plants</label>
+  <label><input type="checkbox" value="trees"> Trees</label>
+  <label><input type="checkbox" value="fish"> Fish</label>
 </div>
 
 <div id="results"></div>
@@ -73,7 +75,7 @@ function formatSuffix(word){
   return word.toLowerCase();
 }
 
-// display names with capitalization
+// display names
 function displayNames(list){
   let results = document.getElementById("results");
   results.innerHTML = "";
@@ -103,7 +105,7 @@ function filterNames(){
     let matchesSearch = n.name.toLowerCase().includes(search);
     let matchesType = !type || n.type === type || n.type === "both";
 
-    // tag match: if no tags selected, true; otherwise at least one of the selected tags must be present
+    // tag match: if no tags selected, true; otherwise at least one selected tag must match
     let matchesTag = selectedTags.length === 0 || n.tags.some(t => selectedTags.includes(t));
 
     return matchesSearch && matchesType && matchesTag;
@@ -112,20 +114,19 @@ function filterNames(){
   displayNames(filtered);
 }
 
-// load JSON database
+// load names from JSON database
 fetch("names.json")
   .then(response => response.json())
   .then(data => {
     names = data;
     displayNames(names);
 
-    // attach listeners
+    // attach listeners AFTER elements + data exist
     document.getElementById("searchBox").addEventListener("input", filterNames);
     document.getElementById("typeFilter").addEventListener("change", filterNames);
     document.querySelectorAll("#tagFilters input").forEach(el => el.addEventListener("change", filterNames));
   });
 
 </script>
-
 </body>
 </html>
