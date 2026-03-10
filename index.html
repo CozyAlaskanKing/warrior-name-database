@@ -2,12 +2,63 @@
 <html>
 <head>
 <title>Warrior Name Archive</title>
+
+<style>
+body{
+font-family: Arial;
+background:#1e1e1e;
+color:white;
+padding:40px;
+}
+
+input,select{
+padding:8px;
+margin:5px;
+}
+
+.name{
+padding:10px;
+border-bottom:1px solid #444;
+}
+</style>
 </head>
 
 <body>
 
 <h1>Warrior Name Archive</h1>
-<p>Your database will go here.</p>
+
+<input id="search" placeholder="Search names...">
+
+<select id="typeFilter">
+<option value="">All</option>
+<option value="prefix">Prefix</option>
+<option value="suffix">Suffix</option>
+<option value="both">Both</option>
+</select>
+
+<div id="results"></div>
+
+<script>
+
+const names = [
+{name:"Sparrow",type:"prefix",tags:["bird","brown"]},
+{name:"Storm",type:"both",tags:["weather","gray"]},
+{name:"Blaze",type:"suffix",tags:["fire","orange"]},
+{name:"Frost",type:"prefix",tags:["ice","white"]}
+];
+
+function displayNames(list){
+let results=document.getElementById("results");
+results.innerHTML="";
+
+list.forEach(n=>{
+results.innerHTML+=`<div class="name">${n.name}</div>`;
+});
+}
+
+displayNames(names);
+
+</script>
 
 </body>
 </html>
