@@ -3,37 +3,58 @@
 <head>
 <title>Warrior Name Archive</title>
 <style>
+/* General page styling */
 body{
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background:#1e1e1e;
   color:white;
   padding:40px;
+  margin:0;
 }
-input, select{
-  padding:8px;
-  margin:5px;
+
+/* Navigation styling */
+nav {
+  background: #2b2b2b;
+  padding: 15px;
+  margin-bottom: 30px;
+  border-radius: 8px;
 }
-.name{
-  padding:10px;
-  border-bottom:1px solid #444;
+nav a {
+  color: #f0f0f0;
+  text-decoration: none;
+  margin-right: 20px;
+  font-weight: bold;
+  font-size: 16px;
+}
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* Search and filter styling */
+input, select {
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 4px;
+  border: none;
+  font-size: 14px;
 }
 #tagFilters label{
   display:inline-block;
   margin-right:10px;
   cursor:pointer;
+  font-size: 14px;
 }
-/* New nav styling */
-nav {
-  margin-bottom: 20px;
+
+/* Name results styling */
+.name{
+  padding:10px;
+  border-bottom:1px solid #444;
+  font-size: 16px;
 }
-nav a {
-  color: #f0f0f0;
-  text-decoration: none;
-  margin-right: 15px;
-  font-weight: bold;
-}
-nav a:hover {
-  text-decoration: underline;
+
+/* Section headers */
+h1, h2 {
+  margin-bottom: 10px;
 }
 </style>
 </head>
@@ -81,32 +102,30 @@ nav a:hover {
   <label><input type="checkbox" value="fish"> Fish</label>
 </div>
 
+<!-- Names results -->
 <div id="results"></div>
 
 <script>
-
 let names = [];
 
-// helper: capitalize first letter of each word
+// Helper: capitalize first letter of each word
 function capitalizeWords(str){
   return str.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
 }
 
-// display names in archive
+// Display names in archive
 function displayNames(list){
   let results = document.getElementById("results");
   results.innerHTML = "";
-
   list.forEach(n => {
     results.innerHTML += `<div class="name">${capitalizeWords(n.name)}</div>`;
   });
 }
 
-// filter function
+// Filter function
 function filterNames(){
   let search = document.getElementById("searchBox").value.toLowerCase();
   let type = document.getElementById("typeFilter").value;
-
   let selectedTags = Array.from(document.querySelectorAll("#tagFilters input:checked")).map(e => e.value);
 
   let filtered = names.filter(n => {
@@ -119,19 +138,18 @@ function filterNames(){
   displayNames(filtered);
 }
 
-// load names from JSON
+// Load names from JSON
 fetch("names.json")
   .then(response => response.json())
   .then(data => {
     names = data;
     displayNames(names);
 
-    // attach listeners
+    // Attach listeners
     document.getElementById("searchBox").addEventListener("input", filterNames);
     document.getElementById("typeFilter").addEventListener("change", filterNames);
     document.querySelectorAll("#tagFilters input").forEach(el => el.addEventListener("change", filterNames));
   });
-
 </script>
 </body>
 </html>
