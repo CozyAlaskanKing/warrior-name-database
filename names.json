@@ -288,7 +288,7 @@
 {"name":"Maggot","type":"both","tags":["animal","insect","white","gray"]},
 {"name":"Magpie","type":"prefix","tags":["bird","animal","black","white"]},
 {"name":"Mallard","type":"prefix","tags":["bird","animal","brown","green","blue"]},
-{"name":"Mallow","type":"prefix","tags":["plant",”white"]},
+{"name":"Mallow","type":"prefix","tags":["plant","white"]},
 {"name":"Maple","type":"prefix","tags":["tree","plant","green","brown","red","orange","yellow"]},
 {"name":"Marigold","type":"prefix","tags":["plant","yellow","orange"]},
 {"name":"Marsh","type":"prefix","tags":["physical","green","brown","blue"]},
