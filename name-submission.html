@@ -5,53 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Suggest a Name</title>
   <style>
+    /* General page styling */
     body {
       font-family: Arial, sans-serif;
-      background-color: #1e1e1e;
-      color: #333;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    header {
-      background-color: #154d17;
+      background: #1e1e1e;
       color: white;
-      width: 100%;
-      padding: 20px 0;
-      text-align: center;
-      font-size: 1.8em;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      padding: 40px;
+      margin: 0;
     }
 
+    /* Navigation styling */
+    nav {
+      background: #2b2b2b;
+      padding: 15px;
+      margin-bottom: 30px;
+      border-radius: 8px;
+    }
+    nav a {
+      color: #f0f0f0;
+      text-decoration: none;
+      margin-right: 20px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* Page header */
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Main content container */
     main {
-      flex: 1;
-      width: 90%;
       max-width: 800px;
-      margin: 40px 0;
+      margin: auto;
+      padding: 20px;
+      background: #2b2b2b;
+      border-radius: 10px;
       text-align: center;
     }
 
-    iframe {
-      width: 100%;
-      height: 900px;
-      border: none;
-    }
-
+    /* Paragraph styling */
     p {
       font-size: 1.1em;
       margin-bottom: 20px;
     }
+
+    /* Embedded form styling */
+    iframe {
+      width: 100%;
+      height: 900px;
+      border: none;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
-  <header>Suggest a Name</header>
+
+  <h1>Suggest a Name</h1>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="name-generator.html">Name Generator</a>
+    <a href="name-submission.html">Submit a Name</a>
+  </nav>
+
   <main>
     <p>Have an idea for a new name? Fill out the form below and I’ll review it!</p>
     <iframe src="https://forms.gle/QGK2vwD59fXt5BRS8">Loading…</iframe>
   </main>
+
 </body>
 </html>
