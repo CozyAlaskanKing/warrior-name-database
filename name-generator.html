@@ -5,21 +5,106 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Name Generator</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #1e1e1e; color: white; }
-    h1 { text-align: center; }
-    #generator { max-width: 500px; margin: auto; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    .tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
-    .tags label { background: #ddd; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
-    .tags input[type="checkbox"] { display: none; }
-    .tags input[type="checkbox"]:checked + span { background: #4CAF50; color: #fff; }
-    #result { font-size: 1.5em; font-weight: bold; text-align: center; margin-top: 20px; }
-    button { display: block; margin: 0 auto; padding: 10px 20px; font-size: 1em; cursor: pointer; border: none; border-radius: 5px; background: #154d17; color: white; }
-    button:hover { background: #45a049; }
+    /* General page styling */
+    body {
+      font-family: Arial, sans-serif;
+      background: #1e1e1e;
+      color: white;
+      padding: 40px;
+      margin: 0;
+    }
+
+    /* Navigation styling */
+    nav {
+      background: #2b2b2b;
+      padding: 15px;
+      margin-bottom: 30px;
+      border-radius: 8px;
+    }
+    nav a {
+      color: #f0f0f0;
+      text-decoration: none;
+      margin-right: 20px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* Generator container */
+    #generator {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background: #2b2b2b;
+      border-radius: 10px;
+    }
+
+    /* Tag checkboxes styling */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .tags label {
+      background: #444;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .tags input[type="checkbox"] {
+      display: none;
+    }
+    .tags input[type="checkbox"]:checked + span {
+      background: #4CAF50;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+    /* Button styling */
+    button {
+      display: block;
+      margin: 0 auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background: #154d17;
+      color: white;
+    }
+    button:hover {
+      background: #45a049;
+    }
+
+    /* Result styling */
+    #result {
+      font-size: 1.5em;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
 
   <h1>Name Generator</h1>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="name-generator.html">Name Generator</a>
+    <a href="name-submission.html">Submit a Name</a>
+  </nav>
 
   <div id="generator">
     <div class="tags" id="tag-filters">
@@ -35,7 +120,7 @@
     const allTags = new Set();
 
     // Load names JSON
-    fetch('names.json') // adjust the path
+    fetch('names.json')
       .then(res => res.json())
       .then(data => {
         names = data;
@@ -61,12 +146,10 @@
 
     // Generate a name
     function generateName(selectedTags = []) {
-      // Filter names by selected tags
       const filtered = selectedTags.length
         ? names.filter(n => n.tags.some(tag => selectedTags.includes(tag)))
         : names;
 
-      // Separate into prefixes and suffixes
       const prefixes = filtered.filter(n => n.type === 'prefix' || n.type === 'both');
       const suffixes = filtered.filter(n => n.type === 'suffix' || n.type === 'both');
 
