@@ -53,11 +53,11 @@ input, select{
   <label><input type="checkbox" value="brown"> Brown</label>
   <label><input type="checkbox" value="physical"> Physical</label>
   <label><input type="checkbox" value="personality"> Personality</label>
-  <label><input type="checkbox" value="animal"> Animals</label>
-  <label><input type="checkbox" value="bird"> Birds</label>
-  <label><input type="checkbox" value="insect"> Insects</label>
-  <label><input type="checkbox" value="plant"> Plants</label>
-  <label><input type="checkbox" value="tree"> Trees</label>
+  <label><input type="checkbox" value="animal"> Animal</label>
+  <label><input type="checkbox" value="bird"> Bird</label>
+  <label><input type="checkbox" value="insect"> Insect</label>
+  <label><input type="checkbox" value="plant"> Plant</label>
+  <label><input type="checkbox" value="tree"> Tree</label>
   <label><input type="checkbox" value="fish"> Fish</label>
 </div>
 
@@ -67,29 +67,18 @@ input, select{
 
 let names = [];
 
-// capitalization helpers
-function formatPrefix(word){
-  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-}
-function formatSuffix(word){
-  return word.toLowerCase();
+// helper: capitalize first letter of each word
+function capitalizeWords(str){
+  return str.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
 }
 
-// display names
+// display names in archive
 function displayNames(list){
   let results = document.getElementById("results");
   results.innerHTML = "";
 
   list.forEach(n => {
-    let displayName = "";
-    if(n.type === "prefix"){
-      displayName = formatPrefix(n.name);
-    } else if(n.type === "suffix"){
-      displayName = formatSuffix(n.name);
-    } else { // both
-      displayName = formatPrefix(n.name);
-    }
-    results.innerHTML += `<div class="name">${displayName}</div>`;
+    results.innerHTML += `<div class="name">${capitalizeWords(n.name)}</div>`;
   });
 }
 
@@ -98,30 +87,26 @@ function filterNames(){
   let search = document.getElementById("searchBox").value.toLowerCase();
   let type = document.getElementById("typeFilter").value;
 
-  // get selected tags
   let selectedTags = Array.from(document.querySelectorAll("#tagFilters input:checked")).map(e => e.value);
 
   let filtered = names.filter(n => {
     let matchesSearch = n.name.toLowerCase().includes(search);
     let matchesType = !type || n.type === type || n.type === "both";
-
-    // tag match: if no tags selected, true; otherwise at least one selected tag must match
     let matchesTag = selectedTags.length === 0 || n.tags.some(t => selectedTags.includes(t));
-
     return matchesSearch && matchesType && matchesTag;
   });
 
   displayNames(filtered);
 }
 
-// load names from JSON database
+// load names from JSON
 fetch("names.json")
   .then(response => response.json())
   .then(data => {
     names = data;
     displayNames(names);
 
-    // attach listeners AFTER elements + data exist
+    // attach listeners
     document.getElementById("searchBox").addEventListener("input", filterNames);
     document.getElementById("typeFilter").addEventListener("change", filterNames);
     document.querySelectorAll("#tagFilters input").forEach(el => el.addEventListener("change", filterNames));
