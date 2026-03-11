@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Name Generator</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+    h1 { text-align: center; }
+    #generator { max-width: 500px; margin: auto; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
+    .tags label { background: #ddd; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+    .tags input[type="checkbox"] { display: none; }
+    .tags input[type="checkbox"]:checked + span { background: #4CAF50; color: #fff; }
+    #result { font-size: 1.5em; font-weight: bold; text-align: center; margin-top: 20px; }
+    button { display: block; margin: 0 auto; padding: 10px 20px; font-size: 1em; cursor: pointer; border: none; border-radius: 5px; background: #4CAF50; color: white; }
+    button:hover { background: #45a049; }
+  </style>
+</head>
+<body>
+
+  <h1>Name Generator</h1>
+
+  <div id="generator">
+    <div class="tags" id="tag-filters">
+      <!-- Tag checkboxes will populate here -->
+    </div>
+
+    <button onclick="showName()">Generate Name</button>
+    <p id="result">Your name will appear here!</p>
+  </div>
+
+  <script>
+    let names = [];
+    const allTags = new Set();
+
+    // Load names JSON
+    fetch('names.json') // adjust the path
+      .then(res => res.json())
+      .then(data => {
+        names = data;
+        populateTagFilters();
+      });
+
+    // Populate the tag filter checkboxes
+    function populateTagFilters() {
+      const container = document.getElementById('tag-filters');
+      names.forEach(n => n.tags.forEach(tag => allTags.add(tag)));
+      Array.from(allTags).sort().forEach(tag => {
+        const label = document.createElement('label');
+        label.innerHTML = `<input type="checkbox" value="${tag}"><span>${tag}</span>`;
+        container.appendChild(label);
+      });
+    }
+
+    // Get selected tags
+    function getSelectedTags() {
+      const checkboxes = document.querySelectorAll('#tag-filters input[type="checkbox"]');
+      return Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+    }
+
+    // Generate a name
+    function generateName(selectedTags = []) {
+      // Filter names by selected tags
+      const filtered = selectedTags.length
+        ? names.filter(n => n.tags.some(tag => selectedTags.includes(tag)))
+        : names;
+
+      // Separate into prefixes and suffixes
+      const prefixes = filtered.filter(n => n.type === 'prefix' || n.type === 'both');
+      const suffixes = filtered.filter(n => n.type === 'suffix' || n.type === 'both');
+
+      if (!prefixes.length || !suffixes.length) return "No valid names!";
+
+      const prefix = prefixes[Math.floor(Math.random() * prefixes.length)].name;
+      const suffix = suffixes[Math.floor(Math.random() * suffixes.length)].name;
+
+      return prefix + suffix;
+    }
+
+    // Show the generated name
+    function showName() {
+      const selectedTags = getSelectedTags();
+      const name = generateName(selectedTags);
+      document.getElementById('result').textContent = name;
+    }
+  </script>
+
+</body>
+</html>
