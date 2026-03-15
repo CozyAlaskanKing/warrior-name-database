@@ -488,7 +488,6 @@
 {"name":"Snake","type":"both","tags":["animal","green","brown","black"]},
 {"name":"Snap","type":"suffix","tags":["physical"]},
 {"name":"Snapper","type":"both","tags":["fish","animal","red","gray"]},
-{"name":"Snapper","type":"both","tags":["fish","animal","red","gray"]},
 {"name":"Sneeze","type":"suffix","tags":["physical","personality"]},
 {"name":"Snip","type":"suffix","tags":["physical"]},
 {"name":"Snipe","type":"prefix","tags":["bird","animal","brown","gray"]},
