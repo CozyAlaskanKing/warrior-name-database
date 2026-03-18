@@ -100,25 +100,31 @@
 
 <div id="generator">
 
-  <!-- NEW: Manual input + locks -->
-<div style="text-align:center; margin-bottom:20px;">
+  <!-- BIG INPUTS + LOCKS -->
+  <div style="text-align:center; margin-bottom:20px;">
+    <!-- NAME DISPLAY -->
+    <div style="font-size:32px; font-weight:bold; display:flex; justify-content:center; align-items:center;">
+      <input id="prefixInput" 
+             style="border:none; background:transparent; color:white; font-size:32px; font-weight:bold; text-align:right; width:120px; outline:none;">
+      <input id="suffixInput" 
+             style="border:none; background:transparent; color:white; font-size:32px; font-weight:bold; text-align:left; width:120px; outline:none;">
+    </div>
 
-  <!-- NAME DISPLAY -->
-  <div style="font-size:32px; font-weight:bold; display:flex; justify-content:center; align-items:center;">
-
-    <input id="prefixInput" 
-           style="border:none; background:transparent; color:white; font-size:32px; font-weight:bold; text-align:right; width:120px; outline:none;">
-
-    <input id="suffixInput" 
-           style="border:none; background:transparent; color:white; font-size:32px; font-weight:bold; text-align:left; width:120px; outline:none;">
-
+    <!-- LOCK BUTTONS -->
+    <div style="display:flex; justify-content:center; gap:60px; margin-top:5px;">
+      <button id="lockPrefix">🔓</button>
+      <button id="lockSuffix">🔓</button>
+    </div>
   </div>
 
-  <!-- LOCK BUTTONS -->
-  <div style="display:flex; justify-content:center; gap:60px; margin-top:5px;">
-    <button id="lockPrefix">🔓</button>
-    <button id="lockSuffix">🔓</button>
-  </div>
+  <!-- TAG FILTERS -->
+  <div class="tags" id="tag-filters"></div>
+
+  <!-- GENERATE BUTTON -->
+  <button onclick="showName()">Generate Name</button>
+
+  <!-- RESULT DISPLAY -->
+  <p id="result" style="text-align:center; margin-top:10px;">Your name will appear here!</p>
 
 </div>
 
