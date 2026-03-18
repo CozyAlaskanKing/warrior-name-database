@@ -90,13 +90,13 @@
 </head>
 <body>
 
-  <h1>Name Generator</h1>
+<h1>Name Generator</h1>
 
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="name-generator.html">Name Generator</a>
-    <a href="name-submission.html">Submit a Name</a>
-  </nav>
+<nav>
+  <a href="index.html">Home</a>
+  <a href="name-generator.html">Name Generator</a>
+  <a href="name-submission.html">Submit a Name</a>
+</nav>
 
 <div id="generator">
 
@@ -121,10 +121,7 @@
   <div class="tags" id="tag-filters"></div>
 
   <!-- GENERATE BUTTON -->
-  <button onclick="showName()">Generate Name</button>
-
-  <!-- RESULT DISPLAY -->
-  <p id="result" style="text-align:center; margin-top:10px;">Your name will appear here!</p>
+  <button onclick="generateName(getSelectedTags())">Generate Name</button>
 
 </div>
 
@@ -175,36 +172,21 @@
   function generateName(selectedTags = []) {
     const { prefixes, suffixes } = getFilteredLists(selectedTags);
 
-    if (!prefixes.length || !suffixes.length) return "No valid names!";
+    if (!prefixes.length || !suffixes.length) return;
 
-    const prefixInput = document.getElementById("prefixInput").value.trim();
-    const suffixInput = document.getElementById("suffixInput").value.trim();
-
-    // PREFIX LOGIC
+    // PREFIX
     if (!lockedPrefix) {
-      if (prefixInput !== "") {
-        currentPrefix = prefixInput;
-      } else {
-        currentPrefix = prefixes[Math.floor(Math.random() * prefixes.length)].name;
-      }
+      const newPrefix = prefixes[Math.floor(Math.random() * prefixes.length)].name;
+      currentPrefix = newPrefix;
+      document.getElementById("prefixInput").value = currentPrefix;
     }
 
-    // SUFFIX LOGIC
+    // SUFFIX
     if (!lockedSuffix) {
-      if (suffixInput !== "") {
-        currentSuffix = suffixInput;
-      } else {
-        currentSuffix = suffixes[Math.floor(Math.random() * suffixes.length)].name;
-      }
+      const newSuffix = suffixes[Math.floor(Math.random() * suffixes.length)].name;
+      currentSuffix = newSuffix;
+      document.getElementById("suffixInput").value = currentSuffix;
     }
-
-    return currentPrefix + currentSuffix;
-  }
-
-  function showName() {
-    const selectedTags = getSelectedTags();
-    const name = generateName(selectedTags);
-    document.getElementById('result').textContent = name;
   }
 
   // 🔒 Lock button behavior
