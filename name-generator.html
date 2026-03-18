@@ -107,67 +107,114 @@
   </nav>
 
   <div id="generator">
-    <div class="tags" id="tag-filters">
-      <!-- Tag checkboxes will populate here -->
-    </div>
 
-    <button onclick="showName()">Generate Name</button>
-    <p id="result">Your name will appear here!</p>
+  <!-- NEW: Manual input + locks -->
+  <div style="display:flex; gap:10px; margin-bottom:15px; justify-content:center;">
+    <div>
+      <input id="prefixInput" placeholder="Prefix (optional)">
+      <button id="lockPrefix">🔓</button>
+    </div>
+    <div>
+      <input id="suffixInput" placeholder="Suffix (optional)">
+      <button id="lockSuffix">🔓</button>
+    </div>
   </div>
 
-  <script>
-    let names = [];
-    const allTags = new Set();
+  <div class="tags" id="tag-filters">
+    <!-- Tag checkboxes will populate here -->
+  </div>
 
-    // Load names JSON
-    fetch('names.json')
-      .then(res => res.json())
-      .then(data => {
-        names = data;
-        populateTagFilters();
-      });
+  <button onclick="showName()">Generate Name</button>
+  <p id="result">Your name will appear here!</p>
+</div>
 
-    // Populate the tag filter checkboxes
-    function populateTagFilters() {
-      const container = document.getElementById('tag-filters');
-      names.forEach(n => n.tags.forEach(tag => allTags.add(tag)));
-      Array.from(allTags).sort().forEach(tag => {
-        const label = document.createElement('label');
-        label.innerHTML = `<input type="checkbox" value="${tag}"><span>${tag}</span>`;
-        container.appendChild(label);
-      });
+<script>
+  let names = [];
+  const allTags = new Set();
+
+  // 🔒 Lock state + current values
+  let lockedPrefix = false;
+  let lockedSuffix = false;
+  let currentPrefix = "";
+  let currentSuffix = "";
+
+  // Load names JSON
+  fetch('names.json')
+    .then(res => res.json())
+    .then(data => {
+      names = data;
+      populateTagFilters();
+    });
+
+  function populateTagFilters() {
+    const container = document.getElementById('tag-filters');
+    names.forEach(n => n.tags.forEach(tag => allTags.add(tag)));
+    Array.from(allTags).sort().forEach(tag => {
+      const label = document.createElement('label');
+      label.innerHTML = `<input type="checkbox" value="${tag}"><span>${tag}</span>`;
+      container.appendChild(label);
+    });
+  }
+
+  function getSelectedTags() {
+    const checkboxes = document.querySelectorAll('#tag-filters input[type="checkbox"]');
+    return Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+  }
+
+  function getFilteredLists(selectedTags) {
+    const filtered = selectedTags.length
+      ? names.filter(n => n.tags.some(tag => selectedTags.includes(tag)))
+      : names;
+
+    return {
+      prefixes: filtered.filter(n => n.type === 'prefix' || n.type === 'both'),
+      suffixes: filtered.filter(n => n.type === 'suffix' || n.type === 'both')
+    };
+  }
+
+  function generateName(selectedTags = []) {
+    const { prefixes, suffixes } = getFilteredLists(selectedTags);
+
+    if (!prefixes.length || !suffixes.length) return "No valid names!";
+
+    const prefixInput = document.getElementById("prefixInput").value.trim();
+    const suffixInput = document.getElementById("suffixInput").value.trim();
+
+    // PREFIX LOGIC
+    if (!lockedPrefix) {
+      if (prefixInput !== "") {
+        currentPrefix = prefixInput;
+      } else {
+        currentPrefix = prefixes[Math.floor(Math.random() * prefixes.length)].name;
+      }
     }
 
-    // Get selected tags
-    function getSelectedTags() {
-      const checkboxes = document.querySelectorAll('#tag-filters input[type="checkbox"]');
-      return Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+    // SUFFIX LOGIC
+    if (!lockedSuffix) {
+      if (suffixInput !== "") {
+        currentSuffix = suffixInput;
+      } else {
+        currentSuffix = suffixes[Math.floor(Math.random() * suffixes.length)].name;
+      }
     }
 
-    // Generate a name
-    function generateName(selectedTags = []) {
-      const filtered = selectedTags.length
-        ? names.filter(n => n.tags.some(tag => selectedTags.includes(tag)))
-        : names;
+    return currentPrefix + currentSuffix;
+  }
 
-      const prefixes = filtered.filter(n => n.type === 'prefix' || n.type === 'both');
-      const suffixes = filtered.filter(n => n.type === 'suffix' || n.type === 'both');
+  function showName() {
+    const selectedTags = getSelectedTags();
+    const name = generateName(selectedTags);
+    document.getElementById('result').textContent = name;
+  }
 
-      if (!prefixes.length || !suffixes.length) return "No valid names!";
+  // 🔒 Lock button behavior
+  document.getElementById("lockPrefix").onclick = function() {
+    lockedPrefix = !lockedPrefix;
+    this.textContent = lockedPrefix ? "🔒" : "🔓";
+  };
 
-      const prefix = prefixes[Math.floor(Math.random() * prefixes.length)].name;
-      const suffix = suffixes[Math.floor(Math.random() * suffixes.length)].name;
-
-      return prefix + suffix;
-    }
-
-    // Show the generated name
-    function showName() {
-      const selectedTags = getSelectedTags();
-      const name = generateName(selectedTags);
-      document.getElementById('result').textContent = name;
-    }
-  </script>
-
-</body>
-</html>
+  document.getElementById("lockSuffix").onclick = function() {
+    lockedSuffix = !lockedSuffix;
+    this.textContent = lockedSuffix ? "🔒" : "🔓";
+  };
+</script>
