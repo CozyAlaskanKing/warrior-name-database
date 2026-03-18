@@ -98,100 +98,120 @@
     <a href="name-submission.html">Submit a Name</a>
   </nav>
 
-  <div id="generator">
-    <div style="display:flex; gap:10px; margin-bottom:15px; justify-content:center;">
-      <div>
-        <input id="prefixInput" placeholder="Prefix (optional)">
-        <button id="lockPrefix">🔓</button>
-      </div>
-      <div>
-        <input id="suffixInput" placeholder="Suffix (optional)">
-        <button id="lockSuffix">🔓</button>
-      </div>
-    </div>
+<div id="generator">
 
-    <div class="tags" id="tag-filters"></div>
+  <!-- NEW: Manual input + locks -->
+<div style="text-align:center; margin-bottom:20px;">
 
-    <button id="generateBtn">Generate Name</button>
+  <!-- NAME DISPLAY -->
+  <div style="font-size:32px; font-weight:bold; display:flex; justify-content:center; align-items:center;">
+
+    <input id="prefixInput" 
+           style="border:none; background:transparent; color:white; font-size:32px; font-weight:bold; text-align:right; width:120px; outline:none;">
+
+    <input id="suffixInput" 
+           style="border:none; background:transparent; color:white; font-size:32px; font-weight:bold; text-align:left; width:120px; outline:none;">
+
   </div>
 
-  <script>
-    let names = [];
-    const allTags = new Set();
+  <!-- LOCK BUTTONS -->
+  <div style="display:flex; justify-content:center; gap:60px; margin-top:5px;">
+    <button id="lockPrefix">🔓</button>
+    <button id="lockSuffix">🔓</button>
+  </div>
 
-    let lockedPrefix = false;
-    let lockedSuffix = false;
-    let currentPrefix = "";
-    let currentSuffix = "";
+</div>
 
-    fetch('names.json')
-      .then(res => res.json())
-      .then(data => {
-        names = data;
-        populateTagFilters();
-      });
+<script>
+  let names = [];
+  const allTags = new Set();
 
-    function populateTagFilters() {
-      const container = document.getElementById('tag-filters');
-      names.forEach(n => n.tags.forEach(tag => allTags.add(tag)));
-      Array.from(allTags).sort().forEach(tag => {
-        const label = document.createElement('label');
-        label.innerHTML = `<input type="checkbox" value="${tag}"><span>${tag}</span>`;
-        container.appendChild(label);
-      });
-    }
+  // 🔒 Lock state + current values
+  let lockedPrefix = false;
+  let lockedSuffix = false;
+  let currentPrefix = "";
+  let currentSuffix = "";
 
-    function getSelectedTags() {
-      return Array.from(document.querySelectorAll('#tag-filters input[type="checkbox"]'))
-                  .filter(cb => cb.checked)
-                  .map(cb => cb.value);
-    }
+  // Load names JSON
+  fetch('names.json')
+    .then(res => res.json())
+    .then(data => {
+      names = data;
+      populateTagFilters();
+    });
 
-    function getFilteredLists(selectedTags) {
-      const filtered = selectedTags.length
-        ? names.filter(n => n.tags.some(tag => selectedTags.includes(tag)))
-        : names;
+  function populateTagFilters() {
+    const container = document.getElementById('tag-filters');
+    names.forEach(n => n.tags.forEach(tag => allTags.add(tag)));
+    Array.from(allTags).sort().forEach(tag => {
+      const label = document.createElement('label');
+      label.innerHTML = `<input type="checkbox" value="${tag}"><span>${tag}</span>`;
+      container.appendChild(label);
+    });
+  }
 
-      return {
-        prefixes: filtered.filter(n => n.type === 'prefix' || n.type === 'both'),
-        suffixes: filtered.filter(n => n.type === 'suffix' || n.type === 'both')
-      };
-    }
+  function getSelectedTags() {
+    const checkboxes = document.querySelectorAll('#tag-filters input[type="checkbox"]');
+    return Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+  }
 
-    function generateName(selectedTags = []) {
-      const { prefixes, suffixes } = getFilteredLists(selectedTags);
-      if (!prefixes.length || !suffixes.length) return "No valid names!";
+  function getFilteredLists(selectedTags) {
+    const filtered = selectedTags.length
+      ? names.filter(n => n.tags.some(tag => selectedTags.includes(tag)))
+      : names;
 
-      // PREFIX
-      if (!lockedPrefix) {
-        const prefixInput = document.getElementById("prefixInput");
-        currentPrefix = prefixInput.value.trim() || prefixes[Math.floor(Math.random() * prefixes.length)].name;
-        prefixInput.value = currentPrefix;
+    return {
+      prefixes: filtered.filter(n => n.type === 'prefix' || n.type === 'both'),
+      suffixes: filtered.filter(n => n.type === 'suffix' || n.type === 'both')
+    };
+  }
+
+  function generateName(selectedTags = []) {
+    const { prefixes, suffixes } = getFilteredLists(selectedTags);
+
+    if (!prefixes.length || !suffixes.length) return "No valid names!";
+
+    const prefixInput = document.getElementById("prefixInput").value.trim();
+    const suffixInput = document.getElementById("suffixInput").value.trim();
+
+    // PREFIX LOGIC
+    if (!lockedPrefix) {
+      if (prefixInput !== "") {
+        currentPrefix = prefixInput;
+      } else {
+        currentPrefix = prefixes[Math.floor(Math.random() * prefixes.length)].name;
       }
+    }
 
-      // SUFFIX
-      if (!lockedSuffix) {
-        const suffixInput = document.getElementById("suffixInput");
-        currentSuffix = suffixInput.value.trim() || suffixes[Math.floor(Math.random() * suffixes.length)].name;
-        suffixInput.value = currentSuffix;
+    // SUFFIX LOGIC
+    if (!lockedSuffix) {
+      if (suffixInput !== "") {
+        currentSuffix = suffixInput;
+      } else {
+        currentSuffix = suffixes[Math.floor(Math.random() * suffixes.length)].name;
       }
     }
 
-    document.getElementById("generateBtn").onclick = function() {
-      const selectedTags = getSelectedTags();
-      generateName(selectedTags);
-    };
+    return currentPrefix + currentSuffix;
+  }
 
-    document.getElementById("lockPrefix").onclick = function() {
-      lockedPrefix = !lockedPrefix;
-      this.textContent = lockedPrefix ? "🔒" : "🔓";
-    };
+  function showName() {
+    const selectedTags = getSelectedTags();
+    const name = generateName(selectedTags);
+    document.getElementById('result').textContent = name;
+  }
 
-    document.getElementById("lockSuffix").onclick = function() {
-      lockedSuffix = !lockedSuffix;
-      this.textContent = lockedSuffix ? "🔒" : "🔓";
-    };
-  </script>
+  // 🔒 Lock button behavior
+  document.getElementById("lockPrefix").onclick = function() {
+    lockedPrefix = !lockedPrefix;
+    this.textContent = lockedPrefix ? "🔒" : "🔓";
+  };
+
+  document.getElementById("lockSuffix").onclick = function() {
+    lockedSuffix = !lockedSuffix;
+    this.textContent = lockedSuffix ? "🔒" : "🔓";
+  };
+</script>
 
 </body>
 </html>
